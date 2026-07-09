@@ -1,11 +1,17 @@
 FROM ubuntu:22.04
 
+# جلوگیری از درخواست‌های تعاملی سیستم‌عامل
+ENV DEBIAN_FRONTEND=noninteractive
+
 # نصب پیش‌نیازها
-RUN apt-get update && apt-get install -y curl wget socat
+RUN apt-get update && apt-get install -y curl wget socat tzdata && \
+    ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
 
-# نصب پنل سنایی و اجرای مستقیم
-RUN curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh | bash
+# نصب سنایی بدون پرسش سوال
+RUN curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh > install.sh && \
+    chmod +x install.sh && \
+    echo "y" | ./install.sh
 
-# در اینجا به جای systemd، خودِ فایل اجرایی را مستقیم صدا می‌زنیم
-# توجه: x-ui معمولاً در /usr/local/x-ui/ قرار دارد
-CMD ["/usr/local/x-ui/x-ui"]
+# اجرای پنل در پس‌زمینه و نگه داشتن کانتینر روشن
+CMD ["/usr/local/x-ui/x-ui", "start"]
