@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# نصب پیش‌نیازها
+# نصب ابزارهای پایه
 RUN apt-get update && apt-get install -y curl wget socat tzdata && \
     ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
@@ -11,6 +11,6 @@ RUN curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh 
     chmod +x install.sh && \
     echo "y" | ./install.sh
 
-# ترفند برای نگه داشتن کانتینر روشن: 
-# اجرای پنل و سپس نگه داشتن یک پردازش بیکار (tail) تا کانتینر خاموش نشود
-CMD /usr/local/x-ui/x-ui start && tail -f /dev/null
+# تنظیم پورت و اجرای پنل در حالت وب (نکته اصلی اینجاست)
+# ما به صورت مستقیم فایل اجرایی را صدا می‌زنیم و پارامترها را تنظیم می‌کنیم
+CMD /usr/local/x-ui/x-ui setting -port 2052 && /usr/local/x-ui/x-ui start
